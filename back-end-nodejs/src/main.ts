@@ -21,7 +21,7 @@ router.delete("/:isbn",async (req,res)=>{
     try {
         const result = await datasource.query(" delete from book where isbn=?", [req.params.isbn]);
         if(result.affectedRows==1){
-            res.sendStatus(204).send("Sucessfully Deleted");
+            res.sendStatus(204);
             return;
         }
         res.sendStatus(400);
@@ -46,7 +46,7 @@ router.patch("/:isbn",async (req,res)=>{
                  res.json(bookNew);
              }
              else if(result.affectedRows==1) {
-                 res.send("Already updated");
+                 res.sendStatus(204);
              }else{
                  res.sendStatus(400);
 
