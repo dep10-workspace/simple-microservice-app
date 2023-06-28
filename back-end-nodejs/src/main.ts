@@ -17,27 +17,43 @@ app.listen("8081" ,()=>{console.log("server has started")});
 app.use(BASE_URL,router);
 
 router.delete("/:isbn",async (req,res)=>{
-    console.log("hello2")
-    const result =await datasource.query(" delete from book where isbn=?",[req.params.isbn]);
-    if(result.affectedRows===1){
-        res.sendStatus(204);
-    };
+
+    try {
+        const result = await datasource.query(" delete from book where isbn=?", [req.params.isbn]);
+        if(result.affectedRows==1){
+            res.sendStatus(204).send("Sucessfully Deleted");
+            return;
+        }
+        res.sendStatus(400);
+
+    }catch (err:any){
+        throw err;
+    }
 });
 
 router.patch("/:isbn",async (req,res)=>{
      const bookNew = req.body as book;
+     console.log(bookNew)
      if(!bookNew.title || !bookNew.isbn){
-         res.sendStatus(404).send("try again");
+
+         res.sendStatus(400);
+
          return;
      }else{
          try {
              const result = await datasource.query("update book set title=? where isbn=?", [bookNew.title, req.params.isbn]);
              if (result.changedRows === 1) {
-                 res.sendStatus(204);
                  res.json(bookNew);
              }
+             else if(result.affectedRows==1) {
+                 res.send("Already updated");
+             }else{
+                 res.sendStatus(400);
+
+             }
          }catch (err:any){
-             throw err;
+             console.log("release error")
+           throw err;
          }
      }
 })
