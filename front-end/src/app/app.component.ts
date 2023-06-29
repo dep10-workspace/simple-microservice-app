@@ -52,4 +52,12 @@ export class AppComponent {
     }
 
   }
+
+  deleteBook(isbn: string) {
+    this.http.delete(`http://localhost:8081/api/v1/books/${isbn}`)
+      .subscribe(result => {
+        const index = this.bookList.findIndex(book => book.isbn === isbn);
+        this.bookList.splice(index, 1);
+      });
+  }
 }
